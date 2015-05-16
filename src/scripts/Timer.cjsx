@@ -37,7 +37,6 @@ define [
                 progress = <progress value={completed} max={100}>{completed}%</progress>
                 stop = <button onClick={=> @props.onStop @props.id}>Stop</button>
 
-
                 if completed >= 100
                     setTimeout (=> @props.onFinished @props.id), 0 unless @props.notified
 
