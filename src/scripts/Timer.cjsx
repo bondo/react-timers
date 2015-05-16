@@ -17,7 +17,10 @@ define [
         fromTime: (time) ->
             hours: Math.floor time / (60 * 60 * 1000)
             minutes: (Math.floor time / (60 * 1000)) % 60
-            seconds: (Math.floor time / 1000) % 60
+            seconds: (Math.round time / 1000) % 60
+        formatTime: (time) ->
+            parsed = @fromTime time
+            "#{parsed.hours}h #{parsed.minutes}m #{parsed.seconds}s"
 
         render: () ->
             time = null
@@ -34,13 +37,16 @@ define [
                 progress = <progress value={completed} max={100}>{completed}%</progress>
                 stop = <button onClick={=> @props.onStop @props.id}>Stop</button>
 
-                timeText = ''
+
                 if completed >= 100
                     setTimeout (=> @props.onFinished @props.id), 0 unless @props.notified
-                else
-                    passedObj = @fromTime passed
-                    timeText = "#{passedObj.hours}h #{passedObj.minutes}m #{passedObj.seconds}s"
-                time = <span><span className="time-passed">{timeText}</span> /</span>
+
+                timeTextElapsed = if completed < 100 then @formatTime passed
+                timeTextRemaining = if completed < 100 then @formatTime duration - passed
+                time = <span>
+                    <span className="time-info">{timeTextElapsed}</span> +
+                    <span className="time-info">{timeTextRemaining}</span> =
+                </span>
 
             <div className='timer'>
                 <ContentEditable html={@props.name} onChange={@updateName} />
