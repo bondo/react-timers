@@ -15,11 +15,27 @@ define [
         updateTime: () ->
             @setState time: new Date().getTime()
 
-        componentDidMount: () ->
+        trackTime: () ->
+            @forgatTime false if @intervalId?
+            @updateTime()
             @intervalId = setInterval (=> @updateTime()), 1000
 
-        componentWillUnmount: () ->
+        forgetTime: (clearTime = true) ->
+            return unless @intervalId?
             clearInterval @intervalId
+            @intervalId = null
+            @setState time: null if clearTime
+
+        componentDidMount: () -> @trackTime() if @props.started?
+        componentWillUnmount: () -> @forgetTime false
+        componentWillReceiveProps: (nextProps) ->
+            return if nextProps.started is @props.started
+            @forgetTime(not nextProps.started?) if @props.started?
+            @trackTime() if nextProps.started?
+
+        onStart: () -> @props.onStart @props.id
+        onStop: () -> @props.onStop @props.id
+        onDelete: () -> @props.onDelete @props.id
 
         updateName: (e) ->
             @props.setName @props.id, e.target.value
@@ -47,7 +63,7 @@ define [
 
                 startText = 'Restart'
                 progress = <progress value={completed} max={100}>{completed}%</progress>
-                stop = <button onClick={=> @props.onStop @props.id}>Stop</button>
+                stop = <button onClick={@onStop}>Stop</button>
 
                 if completed >= 100
                     setTimeout (=> @props.onFinished @props.id), 0 unless @props.notified
@@ -61,9 +77,9 @@ define [
 
             <div className='timer'>
                 <ContentEditable html={@props.name} onChange={@updateName} />
-                <button onClick={=> @props.onStart @props.id, @state.time}>{startText}</button>
+                <button onClick={@onStart}>{startText}</button>
                 {stop}
-                <button onClick={=> @props.onDelete @props.id}>Delete</button>
+                <button onClick={@onDelete}>Delete</button>
                 {time}
                 <Duration hours={@props.hours} minutes={@props.minutes} seconds={@props.seconds}
                     setHours={(v) => @props.setTime @props.id, 'hours', v}

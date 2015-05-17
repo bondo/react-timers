@@ -43,9 +43,9 @@ define [
         onDelete: (id) ->
             @setTimers @state.timers.delete id
 
-        onStart: (id, time) ->
+        onStart: (id) ->
             timers = @state.timers
-            .setIn [id, 'started'], time
+            .setIn [id, 'started'], new Date().getTime()
             .setIn [id, 'notified'], false
             @setTimers timers
 
