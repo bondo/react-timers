@@ -49,12 +49,17 @@ define [
 
         getDuration: () -> ((@props.hours * 60 + @props.minutes) * 60 + @props.seconds) * 1000
         getTimeSinceStart: () -> @state.time - @props.started
-        fromTime: (time) ->
-            hours: Math.floor time / (60 * 60 * 1000)
-            minutes: (Math.floor time / (60 * 1000)) % 60
-            seconds: (Math.round time / 1000) % 60
-        formatTime: (time) ->
-            parsed = @fromTime time
+
+        fromTime: (time, rounder = Math.floor) ->
+            fullSeconds = rounder time / 1000
+            fullMinutes = Math.floor fullSeconds / 60
+            hours   = Math.floor fullMinutes / 60
+            minutes = fullMinutes % 60
+            seconds = fullSeconds % 60
+            {hours,minutes,seconds}
+
+        formatTime: (time, rounder = Math.floor) ->
+            parsed = @fromTime time, rounder
             "#{parsed.hours}h #{parsed.minutes}m #{parsed.seconds}s"
 
         renderProgressBarText: (v) ->
@@ -91,9 +96,10 @@ define [
 
                 if passed >= duration
                     setTimeout (=> @props.onFinished @props.id), 0 unless @props.notified
+                    passed = duration
 
-                timeTextElapsed = if completed < 100 then @formatTime passed else @formatTime duration
-                timeTextRemaining = if completed < 100 then @formatTime duration - passed else @formatTime 0
+                timeTextElapsed = @formatTime passed
+                timeTextRemaining = @formatTime duration - passed, Math.ceil
 
             transitionDuration = Math.round @props.updateInterval * @props.transitionDurationScale
 
