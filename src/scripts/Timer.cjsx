@@ -13,13 +13,19 @@ define [
         getInitialState: () ->
             time: new Date().getTime()
 
+        getDefaultProps: () ->
+            updateInterval: 200
+            # Take that much longer than the updateInterval to make the transition.
+            # This seems a bit weird, but it makes for a much smoother transition.
+            transitionDurationScale: 1.8
+
         updateTime: () ->
             @setState time: new Date().getTime()
 
         trackTime: () ->
             @forgatTime false if @intervalId?
             @updateTime()
-            @intervalId = setInterval (=> @updateTime()), 100
+            @intervalId = setInterval (=> @updateTime()), @props.updateInterval
 
         forgetTime: (clearTime = true) ->
             return unless @intervalId?
@@ -70,7 +76,7 @@ define [
 
                 completed = 100
                 if duration > 0 and passed < duration
-                    completed = 100 * (passed + 100) / duration
+                    completed = Math.min 100, 100 * (passed + @props.updateInterval) / duration
 
                     progressBgColor = 'lightgreen'
                     progressTextOnBgColor = 'rgb(50,50,50)'
@@ -104,7 +110,7 @@ define [
                 />
                 <ProgressBar
                     value={completed}
-                    transitionDuration='0.2s'
+                    transitionDuration={((@props.updateInterval*@props.transitionDurationScale)/1000)+'s'}
                     textColor={[progressTextOnValueColor,progressTextOnBgColor]}
                     valueBarStyle={background: progressValueColor, transitionTimingFunction: 'linear'}
                     style={background: progressBgColor, width: '100%', marginTop: 5}
