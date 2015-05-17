@@ -63,12 +63,14 @@ define [
         render: () ->
             time = null
             stop = null
-            progressBgColor = 'white'
-            progressValueColor = 'gray'
-            progressTextOnBgColor = 'black'
-            progressTextOnValueColor = 'rgb(240,240,240)'
             startText = 'Start'
             completed = 0
+
+            progressBgColor = 'white'
+            progressTextOnBgColor = 'black'
+
+            progressValueColor = 'gray'
+            progressTextOnValueColor = 'rgb(240,240,240)'
 
             if @props.started?
                 duration = @getDuration()
@@ -97,6 +99,8 @@ define [
                     <span className="time-info">{timeTextRemaining}</span> =
                 </span>
 
+            transitionDuration = Math.round @props.updateInterval * @props.transitionDurationScale
+
             <div className='timer'>
                 <ContentEditable html={@props.name} onChange={@updateName} />
                 <button onClick={@onStart}>{startText}</button>
@@ -110,7 +114,7 @@ define [
                 />
                 <ProgressBar
                     value={completed}
-                    transitionDuration={((@props.updateInterval*@props.transitionDurationScale)/1000)+'s'}
+                    transitionDuration={(transitionDuration/1000)+'s'}
                     textColor={[progressTextOnValueColor,progressTextOnBgColor]}
                     valueBarStyle={background: progressValueColor, transitionTimingFunction: 'linear'}
                     style={background: progressBgColor, width: '100%', marginTop: 5}
