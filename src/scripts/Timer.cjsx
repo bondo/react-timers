@@ -68,8 +68,8 @@ define [
                 if completed >= 100
                     setTimeout (=> @props.onFinished @props.id), 0 unless @props.notified
 
-                timeTextElapsed = if completed < 100 then @formatTime passed
-                timeTextRemaining = if completed < 100 then @formatTime duration - passed
+                timeTextElapsed = if completed < 100 then @formatTime passed else @formatTime duration
+                timeTextRemaining = if completed < 100 then @formatTime duration - passed else @formatTime 0
                 time = <span>
                     <span className="time-info">{timeTextElapsed}</span> +
                     <span className="time-info">{timeTextRemaining}</span> =
