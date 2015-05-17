@@ -72,8 +72,11 @@ define [
             progressValueColor = 'gray'
             progressTextOnValueColor = 'rgb(240,240,240)'
 
+            duration = @getDuration()
+            timeTextElapsed = @formatTime 0
+            timeTextRemaining = @formatTime duration
+
             if @props.started?
-                duration = @getDuration()
                 passed = @getTimeSinceStart()
 
                 completed = 100
@@ -87,26 +90,24 @@ define [
                     progressTextOnValueColor = 'rgb(200,200,200)'
 
                 startText = 'Restart'
-                stop = <button onClick={@onStop}>Stop</button>
 
                 if passed >= duration
                     setTimeout (=> @props.onFinished @props.id), 0 unless @props.notified
 
                 timeTextElapsed = if completed < 100 then @formatTime passed else @formatTime duration
                 timeTextRemaining = if completed < 100 then @formatTime duration - passed else @formatTime 0
-                time = <span>
-                    <span className="time-info">{timeTextElapsed}</span> +
-                    <span className="time-info">{timeTextRemaining}</span> =
-                </span>
 
             transitionDuration = Math.round @props.updateInterval * @props.transitionDurationScale
 
             <div className='timer'>
                 <ContentEditable html={@props.name} onChange={@updateName} />
-                <button onClick={@onStart}>{startText}</button>
-                {stop}
+                <button onClick={@onStart} className="btn-start">{startText}</button>
+                <button onClick={@onStop} disabled={not @props.started?}>Stop</button>
                 <button onClick={@onDelete}>Delete</button>
-                {time}
+                <span>
+                    <span className="time-info">{timeTextElapsed}</span> +
+                    <span className="time-info">{timeTextRemaining}</span> =
+                </span>
                 <Duration hours={@props.hours} minutes={@props.minutes} seconds={@props.seconds}
                     setHours={(v) => @props.setTime @props.id, 'hours', v}
                     setMinutes={(v) => @props.setTime @props.id, 'minutes', v}
