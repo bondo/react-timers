@@ -61,8 +61,6 @@ define [
             Math.floor(v)+'%'
 
         render: () ->
-            time = null
-            stop = null
             startText = 'Start'
             completed = 0
 
