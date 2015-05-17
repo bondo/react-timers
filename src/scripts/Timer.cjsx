@@ -1,8 +1,9 @@
 define [
     'react/addons'
     'jsx!react-contenteditable'
+    '../../vendor/react-progress-bar'
     './Duration'
-], (React, ContentEditable, Duration) ->
+], (React, ContentEditable, ProgressBar, Duration) ->
     'use strict'
 
     React.createClass
@@ -18,7 +19,7 @@ define [
         trackTime: () ->
             @forgatTime false if @intervalId?
             @updateTime()
-            @intervalId = setInterval (=> @updateTime()), 1000
+            @intervalId = setInterval (=> @updateTime()), 100
 
         forgetTime: (clearTime = true) ->
             return unless @intervalId?
@@ -50,22 +51,35 @@ define [
             parsed = @fromTime time
             "#{parsed.hours}h #{parsed.minutes}m #{parsed.seconds}s"
 
+        renderProgressBarText: (v) ->
+            Math.floor(v)+'%'
+
         render: () ->
             time = null
             stop = null
-            progress = null
+            progressBgColor = 'white'
+            progressValueColor = 'darkgreen'
+            progressTextOnBgColor = 'darkblue'
+            progressTextOnValueColor = 'lightblue'
             startText = 'Start'
+            completed = 0
 
             if @props.started?
                 duration = @getDuration()
                 passed = @getTimeSinceStart()
-                completed = if duration > 0 then Math.min 100, Math.round 100 * passed / duration else 100
+                progressBgColor = 'lightgreen'
+
+                completed = 100
+                if duration > 0 and passed < duration
+                    completed = 100 * (passed + 100) / duration
+                else
+                    progressValueColor = 'lightgray'
+                    progressTextOnValueColor = 'black'
 
                 startText = 'Restart'
-                progress = <progress value={completed} max={100}>{completed}%</progress>
                 stop = <button onClick={@onStop}>Stop</button>
 
-                if completed >= 100
+                if passed >= duration
                     setTimeout (=> @props.onFinished @props.id), 0 unless @props.notified
 
                 timeTextElapsed = if completed < 100 then @formatTime passed else @formatTime duration
@@ -86,5 +100,12 @@ define [
                     setMinutes={(v) => @props.setTime @props.id, 'minutes', v}
                     setSeconds={(v) => @props.setTime @props.id, 'seconds', v}
                 />
-                {progress}
+                <ProgressBar
+                    value={completed}
+                    transitionDuration='0.2s'
+                    textColor={[progressTextOnValueColor,progressTextOnBgColor]}
+                    valueBarStyle={background: progressValueColor, transitionTimingFunction: 'linear'}
+                    style={background: progressBgColor, width: '100%', marginTop: 5}
+                    renderText={@renderProgressBarText}
+                />
             </div>

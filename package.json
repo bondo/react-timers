@@ -9,7 +9,11 @@
   "dependencies": {
     "react": "~0.13.3",
     "jsx-loader": "~0.13.2",
-    "react-contenteditable": "0.0.2"
+    "react-contenteditable": "0.0.2",
+    "object-assign": "~2.0.0",
+    "buffer-function": "~1.0.0",
+    "transitionend-property": "0.0.2",
+    "react-style-normalizer": "~1.2.8"
   },
   "devDependencies": {
     "cjsx-loader": "~2.0.1",
