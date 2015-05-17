@@ -12,18 +12,7 @@ define [
 
         getInitialState: () ->
             timers: fromJS JSON.parse localStorage['timers'] ? '{}'
-            time: new Date().getTime()
             defaults: fromJS JSON.parse localStorage['defaults'] ? '{"hours":0,"minutes":10,"seconds":0}'
-
-        updateTime: () ->
-            @setState time: new Date().getTime()
-
-        componentDidMount: () ->
-            @intervalId = setInterval (=> @updateTime()), 1000
-
-        componentWillUnmount: () ->
-            console.log 'unmount'
-            clearInterval @intervalId
 
         nextId: () ->
             id = parseInt(localStorage['nextId'] ? 1, 10)
@@ -54,9 +43,9 @@ define [
         onDelete: (id) ->
             @setTimers @state.timers.delete id
 
-        onStart: (id) ->
+        onStart: (id, time) ->
             timers = @state.timers
-            .setIn [id, 'started'], @state.time
+            .setIn [id, 'started'], time
             .setIn [id, 'notified'], false
             @setTimers timers
 
@@ -77,7 +66,6 @@ define [
         renderTimers: () ->
             <Timer
                 key={timer.get 'id'}
-                time={@state.time}
                 onDelete={@onDelete}
                 onStart={@onStart}
                 onStop={@onStop}

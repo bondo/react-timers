@@ -9,11 +9,23 @@ define [
         displayName: 'Timer'
         mixins: [React.addons.PureRenderMixin]
 
+        getInitialState: () ->
+            time: new Date().getTime()
+
+        updateTime: () ->
+            @setState time: new Date().getTime()
+
+        componentDidMount: () ->
+            @intervalId = setInterval (=> @updateTime()), 1000
+
+        componentWillUnmount: () ->
+            clearInterval @intervalId
+
         updateName: (e) ->
             @props.setName @props.id, e.target.value
 
         getDuration: () -> ((@props.hours * 60 + @props.minutes) * 60 + @props.seconds) * 1000
-        getTimeSinceStart: () -> @props.time - @props.started
+        getTimeSinceStart: () -> @state.time - @props.started
         fromTime: (time) ->
             hours: Math.floor time / (60 * 60 * 1000)
             minutes: (Math.floor time / (60 * 1000)) % 60
@@ -49,7 +61,7 @@ define [
 
             <div className='timer'>
                 <ContentEditable html={@props.name} onChange={@updateName} />
-                <button onClick={=> @props.onStart @props.id}>{startText}</button>
+                <button onClick={=> @props.onStart @props.id, @state.time}>{startText}</button>
                 {stop}
                 <button onClick={=> @props.onDelete @props.id}>Delete</button>
                 {time}
