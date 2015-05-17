@@ -58,23 +58,25 @@ define [
             time = null
             stop = null
             progressBgColor = 'white'
-            progressValueColor = 'darkgreen'
-            progressTextOnBgColor = 'darkblue'
-            progressTextOnValueColor = 'lightblue'
+            progressValueColor = 'gray'
+            progressTextOnBgColor = 'black'
+            progressTextOnValueColor = 'rgb(240,240,240)'
             startText = 'Start'
             completed = 0
 
             if @props.started?
                 duration = @getDuration()
                 passed = @getTimeSinceStart()
-                progressBgColor = 'lightgreen'
 
                 completed = 100
                 if duration > 0 and passed < duration
                     completed = 100 * (passed + 100) / duration
-                else
-                    progressValueColor = 'lightgray'
-                    progressTextOnValueColor = 'black'
+
+                    progressBgColor = 'lightgreen'
+                    progressTextOnBgColor = 'rgb(50,50,50)'
+
+                    progressValueColor = 'darkgreen'
+                    progressTextOnValueColor = 'rgb(200,200,200)'
 
                 startText = 'Restart'
                 stop = <button onClick={@onStop}>Stop</button>
