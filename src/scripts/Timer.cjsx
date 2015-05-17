@@ -112,10 +112,9 @@ define [
                     <span className="time-info">{timeTextElapsed}</span> +
                     <span className="time-info">{timeTextRemaining}</span> =
                 </span>
-                <Duration hours={@props.hours} minutes={@props.minutes} seconds={@props.seconds}
-                    setHours={(v) => @props.setTime @props.id, 'hours', v}
-                    setMinutes={(v) => @props.setTime @props.id, 'minutes', v}
-                    setSeconds={(v) => @props.setTime @props.id, 'seconds', v}
+                <Duration
+                    hours={@props.hours} minutes={@props.minutes} seconds={@props.seconds}
+                    setTime={(v) => @props.setTime @props.id, v}
                 />
                 <ProgressBar
                     value={completed}

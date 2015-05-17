@@ -24,9 +24,8 @@ define [
                 localStorage['timers'] = JSON.stringify timers
                 cb?()
 
-        setDefaults: (name, value) ->
-            console.log 'set', name, value
-            defaults = @state.defaults.set name, parseInt(value, 10)
+        setDefaults: (value) ->
+            defaults = fromJS value
             @setState {defaults}, ->
                 localStorage['defaults'] = JSON.stringify defaults
 
@@ -60,8 +59,11 @@ define [
         setName: (id, name) ->
             @setTimers @state.timers.setIn([id, 'name'], name)
 
-        setTime: (id, field, value) ->
-            @setTimers @state.timers.setIn([id, field], value)
+        setTime: (id, fields) ->
+            timers = @state.timers
+            for field, value of fields when field in ['hours', 'minutes', 'seconds']
+                timers = timers.setIn([id, field], value)
+            @setTimers timers
 
         renderTimers: () ->
             <Timer
@@ -79,11 +81,6 @@ define [
             <div>
                 <h2>Timers</h2>
                 <button onClick={@addTimer}>Add timer</button>
-                <Duration
-                    setHours={(v) => @setDefaults 'hours', v}
-                    setMinutes={(v) => @setDefaults 'minutes', v}
-                    setSeconds={(v) => @setDefaults 'seconds', v}
-                    {...@state.defaults.toObject()}
-                />
+                <Duration setTime={@setDefaults} {...@state.defaults.toObject()} />
                 <div className="container">{@renderTimers()}</div>
             </div>
