@@ -3,7 +3,8 @@ define [
     'jsx!react-contenteditable'
     '../../vendor/react-progress-bar'
     './Duration'
-], (React, ContentEditable, ProgressBar, Duration) ->
+    './utils'
+], (React, ContentEditable, ProgressBar, Duration, utils) ->
     'use strict'
 
     React.createClass
@@ -25,7 +26,7 @@ define [
         trackTime: () ->
             @forgatTime false if @intervalId?
             @updateTime()
-            @intervalId = setInterval (=> @updateTime()), @props.updateInterval
+            @intervalId = setInterval @updateTime, @props.updateInterval
 
         forgetTime: (clearTime = true) ->
             return unless @intervalId?
@@ -47,6 +48,7 @@ define [
         onStart: () -> @props.onStart @props.id
         onStop: () -> @props.onStop @props.id
         onDelete: () -> @props.onDelete @props.id
+        setTime: (v) -> @props.setTime @props.id, v
 
         updateName: (e) ->
             @props.setName @props.id, e.target.value
@@ -54,20 +56,7 @@ define [
         getDuration: () -> ((@props.hours * 60 + @props.minutes) * 60 + @props.seconds) * 1000
         getTimeSinceStart: () -> @state.time - @props.started
 
-        fromTime: (time, rounder = Math.floor) ->
-            fullSeconds = rounder time / 1000
-            fullMinutes = Math.floor fullSeconds / 60
-            hours   = Math.floor fullMinutes / 60
-            minutes = fullMinutes % 60
-            seconds = fullSeconds % 60
-            {hours,minutes,seconds}
-
-        formatTime: (time, rounder = Math.floor) ->
-            parsed = @fromTime time, rounder
-            "#{parsed.hours}h #{parsed.minutes}m #{parsed.seconds}s"
-
-        renderProgressBarText: (v) ->
-            Math.floor(v)+'%'
+        renderProgressBarText: (v) -> Math.floor(v)+'%'
 
         render: () ->
             startText = 'Start'
@@ -80,8 +69,8 @@ define [
             progressTextOnValueColor = 'rgb(240,240,240)'
 
             duration = @getDuration()
-            timeTextElapsed = @formatTime 0
-            timeTextRemaining = @formatTime duration
+            timeTextElapsed = utils.formatTime 0
+            timeTextRemaining = utils.formatTime duration
 
             if @props.started?
                 startText = 'Restart'
@@ -98,8 +87,8 @@ define [
                     progressTextOnValueColor = 'rgb(200,200,200)'
 
                 passed = duration if passed >= duration
-                timeTextElapsed = @formatTime passed
-                timeTextRemaining = @formatTime duration - passed, Math.ceil
+                timeTextElapsed = utils.formatTime passed
+                timeTextRemaining = utils.formatTime duration - passed, Math.ceil
 
             transitionDuration = Math.round @props.updateInterval * @props.transitionDurationScale
 
@@ -114,7 +103,7 @@ define [
                 </span>
                 <Duration
                     hours={@props.hours} minutes={@props.minutes} seconds={@props.seconds}
-                    setTime={(v) => @props.setTime @props.id, v}
+                    setTime={@setTime}
                 />
                 <ProgressBar
                     value={completed}

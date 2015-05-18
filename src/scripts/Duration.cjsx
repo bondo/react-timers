@@ -1,6 +1,7 @@
 define [
     'react/addons'
-], (React) ->
+    './utils'
+], (React, utils) ->
     'use strict'
 
     React.createClass
@@ -20,13 +21,7 @@ define [
         setSeconds: (e) -> @set 'seconds', parseInt(e.target.value, 10)
 
         setFullSeconds: (e) ->
-            fullSeconds = parseInt e.target.value, 10
-            fullMinutes = Math.floor fullSeconds / 60
-
-            @props.setTime
-                hours:   Math.floor fullMinutes / 60
-                minutes: fullMinutes % 60
-                seconds: fullSeconds % 60
+            @props.setTime utils.fromTime 1000 * parseInt(e.target.value, 10)
 
         digits: (v) -> Math.ceil( Math.log(v) / Math.log(10) )
 
