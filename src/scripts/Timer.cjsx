@@ -40,6 +40,10 @@ define [
             @forgetTime(not nextProps.started?) if @props.started?
             @trackTime() if nextProps.started?
 
+        componentDidUpdate: (prevProps, prevState) ->
+            if @getTimeSinceStart() >= @getDuration() and not @props.notified
+                @props.onFinished @props.id
+
         onStart: () -> @props.onStart @props.id
         onStop: () -> @props.onStop @props.id
         onDelete: () -> @props.onDelete @props.id
@@ -80,9 +84,10 @@ define [
             timeTextRemaining = @formatTime duration
 
             if @props.started?
+                startText = 'Restart'
                 passed = @getTimeSinceStart()
-
                 completed = 100
+
                 if duration > 0 and passed < duration
                     completed = Math.min 100, 100 * (passed + @props.updateInterval) / duration
 
@@ -92,12 +97,7 @@ define [
                     progressValueColor = 'darkgreen'
                     progressTextOnValueColor = 'rgb(200,200,200)'
 
-                startText = 'Restart'
-
-                if passed >= duration
-                    setTimeout (=> @props.onFinished @props.id), 0 unless @props.notified
-                    passed = duration
-
+                passed = duration if passed >= duration
                 timeTextElapsed = @formatTime passed
                 timeTextRemaining = @formatTime duration - passed, Math.ceil
 
