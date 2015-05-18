@@ -1,7 +1,7 @@
 define [], () ->
 
-    fromTime: (time, rounder = Math.floor) ->
-        fullSeconds = rounder time / 1000
+    fromTime: (time, rounder = Math.floor, scale = 1000) ->
+        fullSeconds = rounder time / scale
         fullMinutes = Math.floor fullSeconds / 60
         hours   = Math.floor fullMinutes / 60
         minutes = fullMinutes % 60

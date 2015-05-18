@@ -49,9 +49,7 @@ define [
         onStop: () -> @props.onStop @props.id
         onDelete: () -> @props.onDelete @props.id
         setTime: (v) -> @props.setTime @props.id, v
-
-        updateName: (e) ->
-            @props.setName @props.id, e.target.value
+        setName: (e) -> @props.setName @props.id, e.target.value
 
         getDuration: () -> ((@props.hours * 60 + @props.minutes) * 60 + @props.seconds) * 1000
         getTimeSinceStart: () -> @state.time - @props.started
@@ -93,7 +91,7 @@ define [
             transitionDuration = Math.round @props.updateInterval * @props.transitionDurationScale
 
             <div className='timer'>
-                <ContentEditable html={@props.name} onChange={@updateName} />
+                <ContentEditable html={@props.name} onChange={@setName} />
                 <button onClick={@onStart} className="btn-start">{startText}</button>
                 <button onClick={@onStop} disabled={not @props.started?}>Stop</button>
                 <button onClick={@onDelete}>Delete</button>

@@ -21,7 +21,7 @@ define [
         setSeconds: (e) -> @set 'seconds', parseInt(e.target.value, 10)
 
         setFullSeconds: (e) ->
-            @props.setTime utils.fromTime 1000 * parseInt(e.target.value, 10)
+            @props.setTime utils.fromTime parseInt(e.target.value, 10), Math.round, 1
 
         digits: (v) -> Math.ceil( Math.log(v) / Math.log(10) )
 
