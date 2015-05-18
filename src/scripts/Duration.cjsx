@@ -23,8 +23,6 @@ define [
         setFullSeconds: (e) ->
             @props.setTime utils.fromTime parseInt(e.target.value, 10), Math.round, 1
 
-        digits: (v) -> Math.ceil( Math.log(v) / Math.log(10) )
-
         render: () ->
             fullSeconds = (@props.hours * 60 + @props.minutes) * 60 + @props.seconds
             <div className="duration">
@@ -41,7 +39,8 @@ define [
                     value={@props.seconds}
                 />s
                 &nbsp;&nbsp; or &nbsp;&nbsp;
-                <input type="number" min={0} style={width: Math.max(4, @digits(fullSeconds))*7 + 20}
+                <input type="number" min={0} max={359999}
+                    style={width: Math.max(4, utils.digits(fullSeconds))*7.5 + 20}
                     onChange={@setFullSeconds}
                     value={fullSeconds}
                 />s

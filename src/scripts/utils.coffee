@@ -11,3 +11,5 @@ define [], () ->
     formatTime: (time, rounder = Math.floor) ->
         parsed = @fromTime time, rounder
         "#{parsed.hours}h #{parsed.minutes}m #{parsed.seconds}s"
+
+    digits: (v) -> Math.ceil( Math.log(v+1) / Math.log(10) )
