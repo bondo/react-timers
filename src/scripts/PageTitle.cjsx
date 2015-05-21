@@ -25,19 +25,17 @@ define [
         getTimeSinceStart: (timer) ->
             started = timer.get 'started'
             return @state.time - started if started?
-            return -Infinity
+            return NaN
 
         componentDidUpdate: (nextProps, nextState) ->
-            time = @props.timers.map((t) => @getDuration(t) - @getTimeSinceStart(t))
-            running = time.filter (v) -> isFinite v
-            remaining = running.filter((v)->v>0).min()
+            remaining = @props.timers.map (t) => @getDuration(t) - @getTimeSinceStart(t)
+            started = remaining.filterNot isNaN
+            running = started.filter (v) -> v > 0
+            least = running.min()
 
             title = 'Timers'
-            if running.size
-                if remaining > 0
-                    title = 'Timers - ' + utils.formatTime remaining
-                else
-                    title = 'Timers - DONE!'
+            if started.size > 0
+                title = if least? and started.size is running.size then utils.formatTime least else 'DONE!'
             document.title = title
 
         render: () -> null
