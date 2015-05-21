@@ -3,7 +3,8 @@ define [
     'immutable'
     './Timer'
     './Duration'
-], (React, {Map, fromJS}, Timer, Duration) ->
+    './PageTitle'
+], (React, {Map, fromJS}, Timer, Duration, PageTitle) ->
     'use strict'
 
     React.createClass
@@ -79,6 +80,7 @@ define [
 
         render: () ->
             <div>
+                <PageTitle timers={@state.timers} />
                 <h2>Timers</h2>
                 <button onClick={@addTimer}>Add timer</button>
                 <Duration setTime={@setDefaults} {...@state.defaults.toObject()} />
