@@ -6,6 +6,7 @@ define [
 
     React.createClass
         displayName: 'PageTitle'
+        mixins: [React.addons.PureRenderMixin]
 
         getInitialState: () ->
             time: new Date().getTime()
