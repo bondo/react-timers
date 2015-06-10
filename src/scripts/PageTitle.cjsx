@@ -36,7 +36,11 @@ define [
 
             title = 'Timers'
             if started.size > 0
-                title = if least? and started.size is running.size then utils.formatTime least else 'DONE!'
+                if least? and started.size is running.size
+                    title = utils.formatTime least, Math.floor, true
+                else
+                    title = 'DONE!'
+
             document.title = title
 
         render: () -> null
