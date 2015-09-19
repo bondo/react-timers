@@ -24,7 +24,7 @@ define [
             @setState time: new Date().getTime()
 
         trackTime: () ->
-            @forgatTime false if @intervalId?
+            @forgetTime false if @intervalId?
             @updateTime()
             @intervalId = setInterval @updateTime, @props.updateInterval
 
